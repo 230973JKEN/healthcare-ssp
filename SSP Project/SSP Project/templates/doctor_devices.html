@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Devices</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        h2 {
+            color: #0077cc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #ccc;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #e0e0e0;
+        }
+
+        td form {
+            display: inline;
+        }
+
+        button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            margin: 0 2px;
+            cursor: pointer;
+        }
+
+        button[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+        }
+
+        .delete-btn:hover {
+            background-color: #a71d2a;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li.success {
+            color: green;
+        }
+
+        li.error {
+            color: red;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .agent-cell {
+            max-width: 300px;
+            word-break: break-word;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: white;
+        }
+
+        .tag-yes {
+            background-color: #28a745;
+        }
+
+        .tag-no {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <h2>🔐 Remote Device Management</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% if devices %}
+    <table>
+        <thead>
+            <tr>
+                <th>📱 Device Name</th>
+                <th>🌍 IP Address</th>
+                <th>🧠 User Agent</th>
+                <th>✅ Trusted</th>
+                <th>🔐 Approved</th>
+                <th>⏱️ Last Login</th>
+                <th>🛠️ Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for device in devices %}
+            <tr>
+                <td>{{ device.device_name }}</td>
+                <td>{{ device.ip_address }}</td>
+                <td class="agent-cell">{{ device.user_agent }}</td>
+                <td>
+                    <span class="tag {{ 'tag-yes' if device.trusted else 'tag-no' }}">
+                        {{ '✔️ Yes' if device.trusted else '❌ No' }}
+                    </span>
+                </td>
+                <td>
+                    <span class="tag {{ 'tag-yes' if device.approved else 'tag-no' }}">
+                        {{ '✔️ Yes' if device.approved else '❌ No' }}
+                    </span>
+                </td>
+                <td>{{ device.last_login }}</td>
+                <td>
+                    {% if not device.approved %}
+                        <form method="post">
+                            <input type="hidden" name="device_id" value="{{ device.device_id }}">
+                            <input type="hidden" name="action" value="approve">
+                            <button type="submit">Approve</button>
+                        </form>
+                    {% endif %}
+                    <form method="post">
+                        <input type="hidden" name="device_id" value="{{ device.device_id }}">
+                        <input type="hidden" name="action" value="delete">
+                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to revoke this device?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>🚫 No devices registered yet.</p>
+    {% endif %}
+
+    <a href="{{ url_for('doctor_dashboard') }}">⬅️ Back to Dashboard</a>
+</body>
+</html>

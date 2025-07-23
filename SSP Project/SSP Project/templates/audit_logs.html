@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+    <h2 style="margin-bottom: 20px;">📜 Audit Logs</h2>
+
+    <!-- Filter Form -->
+    <form method="POST" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;">
+        <div style="flex: 1;">
+            <label for="username">Username:</label><br>
+            <input type="text" id="username" name="username" placeholder="Search by username"
+                   value="{{ session.get('log_filters', {}).get('username', '') }}"
+                   style="width: 100%; padding: 6px;">
+        </div>
+
+        <div style="flex: 1;">
+            <label for="role">Role:</label><br>
+            <select name="role" id="role" style="width: 100%; padding: 6px;">
+                <option value="">All</option>
+                <option value="admin" {% if session.get('log_filters', {}).get('role') == 'admin' %}selected{% endif %}>Admin</option>
+                <option value="doctor" {% if session.get('log_filters', {}).get('role') == 'doctor' %}selected{% endif %}>Doctor</option>
+                <option value="nurse" {% if session.get('log_filters', {}).get('role') == 'nurse' %}selected{% endif %}>Nurse</option>
+                <option value="patient" {% if session.get('log_filters', {}).get('role') == 'patient' %}selected{% endif %}>Patient</option>
+                <option value="hr" {% if session.get('log_filters', {}).get('role') == 'hr' %}selected{% endif %}>HR</option>
+            </select>
+        </div>
+
+        <div style="flex: 2;">
+            <label for="action">Action Contains:</label><br>
+            <input type="text" id="action" name="action" placeholder="e.g. viewed, updated, deleted..."
+                   value="{{ session.get('log_filters', {}).get('action', '') }}"
+                   style="width: 100%; padding: 6px;">
+        </div>
+
+        <div>
+            <button type="submit" style="padding: 8px 16px;">🔎 Filter</button>
+        </div>
+    </form>
+
+    <hr style="margin: 20px 0;">
+
+    {% if logs %}
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+                <tr style="background-color: #f9f9f9; text-align: left;">
+                    <th style="padding: 8px; border: 1px solid #ddd;">#</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Username</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Role</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Action</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Timestamp</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ log.log_id }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ log.username }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-transform: capitalize;">{{ log.role }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ log.action }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') if log.timestamp else '—' }}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{{ log.ip_address }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div style="text-align: center;">
+        {% for p in range(1, total_pages + 1) %}
+            {% if p == page %}
+                <span style="margin: 0 5px; font-weight: bold;">[{{ p }}]</span>
+            {% else %}
+                <a href="{{ url_for('view_audit_logs', page=p) }}" style="margin: 0 5px;">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% else %}
+        <p>No audit logs found.</p>
+    {% endif %}
+</div>
+{% endblock %}
