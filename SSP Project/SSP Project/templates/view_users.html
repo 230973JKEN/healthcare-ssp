@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-wrapper">
+    <h2 class="section-title">👥 User Management</h2>
+
+    <div class="card shadow">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.user_id }}</td>
+                    <td>{{ user.username }}</td>  <!-- ✅ Displays actual username -->
+                    <td class="role-tag role-{{ user.role }}">{{ user.role.title() }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <a href="/admin/update_user/{{ user.user_id }}" class="btn btn-sm btn-edit">✏️ Edit</a>
+                        <a href="/admin/delete_user/{{ user.user_id }}" class="btn btn-sm btn-delete">🗑️ Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-links">
+        <a href="/admin/permissions" class="link-item">🔐 Manage Permissions</a>
+        <a href="/admin/appointments" class="link-item">📅 View All Appointments</a>
+        {% if session.get('user_role') == 'admin' %}
+        <a href="{{ url_for('view_audit_logs') }}" class="link-item">🕵️ Audit Logs</a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .admin-wrapper {
+        max-width: 1100px;
+        margin: auto;
+        padding: 30px;
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f4f8fc;
+    }
+
+    .section-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 25px;
+        color: #2c3e50;
+        text-align: center;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 20px;
+        overflow-x: auto;
+    }
+
+    .shadow {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 15px;
+        color: #333;
+    }
+
+    .table thead {
+        background-color: #2f86eb;
+        color: white;
+    }
+
+    .table th, .table td {
+        padding: 12px 14px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #f9fcff;
+    }
+
+    .table tbody tr:hover {
+        background-color: #eef5ff;
+    }
+
+    .btn {
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-weight: 500;
+        font-size: 14px;
+        text-decoration: none;
+        margin-right: 6px;
+        display: inline-block;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn-sm {
+        font-size: 13px;
+        padding: 4px 10px;
+    }
+
+    .btn-edit {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-delete {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    .btn-edit:hover {
+        background-color: #218838;
+    }
+
+    .btn-delete:hover {
+        background-color: #c0392b;
+    }
+
+    .role-tag {
+        font-weight: 600;
+        text-transform: capitalize;
+        padding: 3px 8px;
+        border-radius: 4px;
+        display: inline-block;
+        color: white;
+    }
+
+    .role-admin { background-color: #8e44ad; }
+    .role-doctor { background-color: #007bff; }
+    .role-nurse { background-color: #17a2b8; }
+    .role-patient { background-color: #6c757d; }
+    .role-hr { background-color: #fd7e14; }
+
+    .admin-links {
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .link-item {
+        display: inline-block;
+        margin: 0 12px;
+        text-decoration: none;
+        color: #2c3e50;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .link-item:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

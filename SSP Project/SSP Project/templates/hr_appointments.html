@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+
+    <h2 style="margin-bottom: 20px;">👩‍💼 HR Appointment Scheduling</h2>
+
+    <!-- Appointment Creation Form -->
+    <div style="background-color: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); margin-bottom: 30px;">
+        <form method="POST" style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+                <label for="doctor_id" style="font-weight: bold;">Doctor:</label><br>
+                <select name="doctor_id" id="doctor_id" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    {% for doc in doctors %}
+                    <option value="{{ doc.user_id }}">{{ doc.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="patient_id" style="font-weight: bold;">Patient:</label><br>
+                <select name="patient_id" id="patient_id" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    {% for pat in patients %}
+                    <option value="{{ pat.patient_id }}">{{ pat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="appointment_date" style="font-weight: bold;">Appointment Date:</label><br>
+                <input type="date" name="appointment_date" id="appointment_date" required
+                       style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            </div>
+
+            <div style="text-align: right;">
+                <input type="submit" value="➕ Schedule Appointment"
+                       style="padding: 10px 20px; background-color: #007baf; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            </div>
+        </form>
+    </div>
+
+    <!-- Appointments Table -->
+    {% if appointments %}
+    <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+        <h3 style="margin-bottom: 15px;">📋 Existing Appointments</h3>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background-color: #f4f8fb;">
+                    <tr>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">ID</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Doctor</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Patient</th>
+                        <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Date</th>
+                        <th style="text-align: center; padding: 10px; border-bottom: 1px solid #ccc;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in appointments %}
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">{{ appt.appointment_id }}</td>
+                        <td style="padding: 10px;">{{ appt.doctor_name }}</td>
+                        <td style="padding: 10px;">{{ appt.patient_name }}</td>
+                        <td style="padding: 10px;">{{ appt.appointment_date.strftime('%Y-%m-%d') }}</td>
+                        <td style="text-align: center; padding: 10px;">
+                            <form method="POST" action="{{ url_for('delete_appointment_hr', appointment_id=appt.appointment_id) }}" style="display:inline;">
+                                <button type="submit"
+                                        onclick="return confirm('Are you sure you want to delete this appointment?')"
+                                        style="background-color: #d9534f; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                                    🗑️ Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

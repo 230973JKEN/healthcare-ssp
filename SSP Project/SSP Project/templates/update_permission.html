@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Update Permission</h2>
+
+<form method="post">
+    <p>
+        Role: <input type="text" name="role" value="{{ perm.role }}" required>
+    </p>
+    <p>
+        Resource: <input type="text" name="resource" value="{{ perm.resource }}" required>
+    </p>
+    <p>
+        Action:
+        <select name="action" required>
+            <option value="create" {% if perm.action == 'create' %}selected{% endif %}>create</option>
+            <option value="read" {% if perm.action == 'read' %}selected{% endif %}>read</option>
+            <option value="update" {% if perm.action == 'update' %}selected{% endif %}>update</option>
+            <option value="delete" {% if perm.action == 'delete' %}selected{% endif %}>delete</option>
+        </select>
+    </p>
+    <p><input type="submit" value="Update Permission"></p>
+</form>
+
+<p><a href="{{ url_for('view_permissions') }}">← Back to Permissions</a></p>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2>🧾 Pending Patient Referrals</h2>
+
+  {% if referrals %}
+    <table class="table table-bordered table-hover mt-3">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Patient</th>
+          <th>Referred By</th>
+          <th>To Doctor</th>
+          <th>Reason</th>
+          <th>Expires At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for referral in referrals %}
+          <tr>
+            <form method="POST">
+              <td>{{ referral.referral_id }}</td>
+              <td>{{ referral.patient_name }}</td>
+              <td>{{ referral.referred_by }}</td>
+              <td>{{ referral.referred_to }}</td>
+              <td>{{ referral.reason or "—" }}</td>
+              <td>
+                <input type="hidden" name="referral_id" value="{{ referral.referral_id }}">
+                <input type="datetime-local" name="expires_at" class="form-control" required>
+              </td>
+              <td>
+                <button type="submit" class="btn btn-success btn-sm">
+                  <i class="bi bi-check-circle-fill"></i> Approve
+                </button>
+              </td>
+            </form>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle-fill"></i> No pending referrals found.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

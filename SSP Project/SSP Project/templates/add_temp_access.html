@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Grant Temporary Patient Access</h2>
+
+<form method="POST">
+    <label for="doctor_id">Select Doctor:</label>
+    <select name="doctor_id" required>
+        {% for doctor in doctors %}
+            <option value="{{ doctor.user_id }}">{{ doctor.username }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label for="patient_id">Select Patient:</label>
+    <select name="patient_id" required>
+        {% for patient in patients %}
+            <option value="{{ patient.patient_id }}">{{ patient.name }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label for="expires_at">Access Expiry:</label><br>
+
+    <!-- 📝 Manual typing input -->
+    <input type="text" name="expires_at" placeholder="e.g., 2025-07-01 17:00:00">
+    <br>
+    <small>You can type manually in YYYY-MM-DD HH:MM:SS format</small>
+    <br><br>
+
+    <!-- 📅 Calendar-based input -->
+    <input type="datetime-local" name="expires_at" placeholder="Pick date and time">
+    <br>
+    <small>...or select from calendar and clock</small>
+
+    <br><br>
+    <button type="submit">Grant Temporary Access</button>
+</form>
+{% endblock %}
